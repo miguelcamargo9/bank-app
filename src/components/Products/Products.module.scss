@@ -1,0 +1,49 @@
+// Products.module.scss
+
+@import '../../styles/variables';
+@import '../../styles/mixins';
+
+.container {
+    @include flexCenter;
+    flex-direction: column;
+}
+
+.productCard {
+    border: 1px solid $primary-color;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 20px;
+    text-align: center;
+
+    img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+    }
+
+    .productName {
+        @include responsive-font-size(1.2);
+        font-weight: bold;
+        margin: 10px 0;
+        color: $primary-color;
+    }
+
+    .productDescription {
+        font-size: $font-size-normal;
+        margin-bottom: 10px;
+        color: $secondary-color;
+    }
+}
+
+// Responsive Design
+@media (min-width: $breakpoint-md) {
+    .productCard {
+        width: calc(50% - 20px);
+    }
+}
+
+@media (min-width: $breakpoint-lg) {
+    .productCard {
+        width: calc(25% - 20px);
+    }
+}
