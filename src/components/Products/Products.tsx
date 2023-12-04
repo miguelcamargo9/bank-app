@@ -8,7 +8,7 @@ import Pagination from "../Pagination/Pagination";
 
 const Products: React.FC = () => {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
-  const [displayedProducts, setDisplayedProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -19,7 +19,7 @@ const Products: React.FC = () => {
       try {
         const data = await fetchProducts();
         setAllProducts(data);
-        setDisplayedProducts(data);
+        setFilteredProducts(data);
         setLoading(false);
       } catch (error) {
         setError("Error al cargar los productos");
@@ -32,7 +32,7 @@ const Products: React.FC = () => {
 
   useEffect(() => {
     paginateProducts();
-  }, [currentPage, itemsPerPage, allProducts]);
+  }, [currentPage, itemsPerPage, allProducts, setFilteredProducts]);  
 
   const filterProducts = (query: string) => {
     if (!query) return allProducts;
@@ -50,7 +50,7 @@ const Products: React.FC = () => {
   const paginateProducts = () => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    setDisplayedProducts(allProducts.slice(indexOfFirstItem, indexOfLastItem));
+    setFilteredProducts(allProducts.slice(indexOfFirstItem, indexOfLastItem));
   };
 
   const handlePageChange = (pageNumber: number) => {
@@ -64,9 +64,8 @@ const Products: React.FC = () => {
 
   const handleSearch = (query: string) => {
     const filtered = filterProducts(query);
-    setAllProducts(filtered);
+    setFilteredProducts(filtered);
     setCurrentPage(1);
-    paginateProducts();
   };
 
   if (loading) return <p>Cargando productos...</p>;
@@ -87,7 +86,7 @@ const Products: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {displayedProducts.map((product) => (
+          {filteredProducts.map((product) => (
             <tr key={product.id}>
               <td>
                 <img
@@ -107,7 +106,7 @@ const Products: React.FC = () => {
       <div className={styles.pagination}>
         <Pagination
           itemsPerPage={itemsPerPage}
-          totalItems={allProducts.length}
+          totalItems={filteredProducts.length}
           currentPage={currentPage}
           onPageChange={handlePageChange}
           onItemsPerPageChange={handleItemsPerPageChange}
