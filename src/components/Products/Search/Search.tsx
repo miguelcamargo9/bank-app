@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import styles from './Search.module.scss';
 
 interface SearchProps {
   onSearch: (query: string) => void;
@@ -12,7 +13,15 @@ const Search: React.FC<SearchProps> = ({ onSearch }) => {
     onSearch(event.target.value);
   };
 
-  return <input type="text" value={query} onChange={handleChange} placeholder="Buscar productos financieros" />;
+  return (
+    <input
+      type="text"
+      className={styles.searchInput} // Aplica la clase aquí
+      value={query}
+      onChange={handleChange}
+      placeholder="Buscar productos financieros"
+    />
+  );
 };
 
 export default Search;

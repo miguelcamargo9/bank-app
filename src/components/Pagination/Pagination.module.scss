@@ -1,0 +1,21 @@
+.paginationContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    // otros estilos...
+  }
+  
+  .pageNumbers {
+    list-style-type: none;
+    padding: 0;
+    // otros estilos...
+  
+    li {
+      display: inline;
+      margin: 0 5px;
+      cursor: pointer;
+      // otros estilos...
+    }
+  }
+  

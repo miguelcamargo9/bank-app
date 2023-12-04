@@ -1,3 +1,5 @@
+@import '../../styles/mixins.scss';
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -17,4 +19,8 @@ body {
 .mainContent {
   flex-grow: 1;
   padding: 20px;
+}
+
+h1 {
+  @include responsive-font-size(2rem);
 }
