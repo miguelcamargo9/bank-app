@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 const Products: React.FC = () => {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [currentProducts, setCurrentProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -35,8 +36,14 @@ const Products: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    paginateProducts();
-  }, [currentPage, itemsPerPage, allProducts, setFilteredProducts]);
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredProducts.slice(
+      indexOfFirstItem,
+      indexOfLastItem
+    );
+    setCurrentProducts(currentItems);
+  }, [currentPage, itemsPerPage, filteredProducts]);
 
   const filterProducts = (query: string) => {
     if (!query) return allProducts;
@@ -49,12 +56,6 @@ const Products: React.FC = () => {
         formatDate(product.date_revision).includes(lowercasedQuery)
       );
     });
-  };
-
-  const paginateProducts = () => {
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    setFilteredProducts(allProducts.slice(indexOfFirstItem, indexOfLastItem));
   };
 
   const handlePageChange = (pageNumber: number) => {
@@ -107,7 +108,7 @@ const Products: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredProducts.map((product) => (
+          {currentProducts.map((product) => (
             <tr key={product.id}>
               <td>
                 <img
