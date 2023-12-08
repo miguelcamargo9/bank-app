@@ -31,6 +31,20 @@
     align-items: center;
 }
 
+
+
+.error {
+    border: 1px solid red;
+}
+
+.errorMsg {
+    color: red;
+    margin-top: -15px;
+    margin-bottom: 15px;
+    font-size: 0.8em;
+}
+
+
 @media (min-width: $breakpoint-md) {
     .formContainer {
         max-width: 600px;

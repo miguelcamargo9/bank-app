@@ -22,8 +22,6 @@ const Pagination: React.FC<PaginationProps> = ({
     pageNumbers.push(i);
   }
 
-  console.log("pageNumbers", pageNumbers);
-
   return (
     <div className={styles.paginationContainer}>
       <div>

@@ -45,4 +45,45 @@ export const createProduct = async (product: Product): Promise<Product> => {
         console.error('Error al crear el producto:', error);
         throw error;
     }
+};
+
+export const updateProduct = async (product: Product): Promise<Product> => {
+    try {
+        const response = await fetch(`${BASE_URL}/bp/products/${product.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'authorId': AUTHOR_ID
+            },
+            body: JSON.stringify(product)
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la solicitud de productos');
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error al actualizar el producto:', error);
+        throw error;
+    }
+}
+
+export const deleteProduct = async (id: string): Promise<void> => {
+    try {
+        const response = await fetch(`${BASE_URL}/bp/products?id=${id}`, {
+            method: 'DELETE',
+            headers: {
+                'authorId': AUTHOR_ID
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Error en la solicitud de productos');
+        }
+    } catch (error) {
+        console.error('Error al eliminar el producto:', error);
+        throw error;
+    }
 }

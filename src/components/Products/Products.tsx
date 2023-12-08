@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { fetchProducts } from "../../services/productsService";
+import { deleteProduct, fetchProducts } from "../../services/productsService";
 import { Product } from "../../models/Product";
 import styles from "./Products.module.scss";
 import { formatDate } from "../../helpers/dateHelpers";
 import Search from "./Search/Search";
 import Pagination from "../Pagination/Pagination";
-import ProductForm from "./Create/CreateProduct";
 import { useNavigate } from "react-router-dom";
+import ModalConfirm from "../Modal/ModalConfirm";
+import Alert from "../Alert/Alert";
 
 const Products: React.FC = () => {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
@@ -15,23 +16,31 @@ const Products: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(2);
-  const [showForm, setShowForm] = useState(false);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [showConfirmModal, setShowConfirmModal] = useState<boolean>(false);
+  const [productIdToDelete, setProductIdToDelete] = useState<string | null>(
+    null
+  );
+  const [alertInfo, setAlertInfo] = useState<{
+    message: string;
+    type: "success" | "error" | null;
+  }>({ message: "", type: null });
+
   const navigate = useNavigate();
+  
+  const loadProducts = async () => {
+    try {
+      const data = await fetchProducts();
+      setAllProducts(data);
+      setFilteredProducts(data);
+      setLoading(false);
+    } catch (error) {
+      setError("Error al cargar los productos");
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const loadProducts = async () => {
-      try {
-        const data = await fetchProducts();
-        setAllProducts(data);
-        setFilteredProducts(data);
-        setLoading(false);
-      } catch (error) {
-        setError("Error al cargar los productos");
-        setLoading(false);
-      }
-    };
-
     loadProducts();
   }, []);
 
@@ -73,14 +82,42 @@ const Products: React.FC = () => {
     setCurrentPage(1);
   };
 
-  const handleDeleteProduct = (productId: string) => {
-    const filtered = allProducts.filter((product) => product.id !== productId);
-    setAllProducts(filtered);
-    setShowForm(true);
+  const handleDeleteProduct = async (productId: string) => {
+    try {
+      await deleteProduct(productId);
+      await loadProducts();
+      setAlertInfo({ message: "Eliminado con éxito", type: "success" });
+    } catch (error) {
+      console.error(error);
+      setAlertInfo({
+        message: "No se pudo eliminar el producto",
+        type: "error",
+      });
+    }
+  };
+
+  const confirmDelete = (productId: string) => {
+    setShowConfirmModal(true);
+    setProductIdToDelete(productId);
+  };
+
+  const closeConfirmModal = () => {
+    setShowConfirmModal(false);
+  };
+
+  const deleteConfirmed = async () => {
+    if (productIdToDelete) {
+      await handleDeleteProduct(productIdToDelete);
+    }
+    closeConfirmModal();
   };
 
   const handleCreateProduct = () => {
     navigate(`/create`);
+  };
+
+  const handleCloseAlert = () => {
+    setAlertInfo({ message: "", type: null });
   };
 
   if (loading) return <p>Cargando productos...</p>;
@@ -95,7 +132,23 @@ const Products: React.FC = () => {
           Agregar Producto
         </button>
       </div>
-      {showForm && <ProductForm />}
+      {showConfirmModal && (
+        <ModalConfirm
+          show={showConfirmModal}
+          onClose={closeConfirmModal}
+          onConfirm={deleteConfirmed}
+        >
+          <h2 style={{ textAlign: "center" }}>Confirmar</h2>
+          <p>¿Realmente quieres borrar el registro?</p>
+        </ModalConfirm>
+      )}
+      {alertInfo.type && (
+        <Alert
+          message={alertInfo.message}
+          type={alertInfo.type}
+          onClose={handleCloseAlert}
+        />
+      )}
       <table className={styles.productsTable}>
         <thead>
           <tr>
@@ -122,7 +175,7 @@ const Products: React.FC = () => {
               <td>{formatDate(product.date_release)}</td>
               <td>{formatDate(product.date_revision)}</td>
               <td>
-                <button onClick={() => handleDeleteProduct(product.id)}>
+                <button onClick={() => confirmDelete(product.id)}>
                   Eliminar
                 </button>
               </td>

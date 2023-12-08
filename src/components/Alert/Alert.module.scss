@@ -1,0 +1,17 @@
+/* Alert.module.scss */
+.alert {
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+    color: #fff;
+}
+
+.success {
+    background-color: #4caf50;
+}
+
+.error {
+    background-color: #f44336;
+}
