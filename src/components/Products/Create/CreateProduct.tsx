@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./CreateProduct.module.scss";
 import layoutStyles from "../../Layout/Layout.module.scss";
 import { Product } from "../../../models/Product";
 import { Errors } from "../../../models/Error";
 import { createProduct } from "../../../services/productsService";
+import Alert from "../../Alert/Alert";
+import { useNavigate } from "react-router-dom";
 
 const CreateProduct: React.FC = () => {
+  const navigate = useNavigate();
+  const [shouldRedirect, setShouldRedirect] = useState(false);
   const [product, setProduct] = useState<Product>({
     id: "",
     name: "",
@@ -22,6 +26,26 @@ const CreateProduct: React.FC = () => {
     date_release: "",
     date_revision: "",
   });
+  const [alertInfo, setAlertInfo] = useState<{
+    message: string;
+    type: "success" | "error" | null;
+  }>({ message: "", type: null });
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+
+    if (shouldRedirect) {
+      timer = setTimeout(() => {
+        navigate(-1);
+      }, 3000);
+    }
+
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [shouldRedirect, navigate]);
 
   const validateField = (name: keyof Product, value: string) => {
     if (!value) {
@@ -39,10 +63,19 @@ const CreateProduct: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target as { name: keyof Product; value: string };
-    setProduct((prevProduct) => ({
-      ...prevProduct,
-      [name]: value,
-    }));
+    if (name === "date_release" || name === "date_revision") {
+      setProduct((prevProduct) => ({
+        ...prevProduct,
+        [name]: new Date(value).toISOString().split("T")[0],
+      }));
+      return;
+    } else {
+      setProduct((prevProduct) => ({
+        ...prevProduct,
+        [name]: value,
+      }));
+    }
+
     if (errors[name]) {
       validateField(name, value);
     }
@@ -64,11 +97,16 @@ const CreateProduct: React.FC = () => {
 
     // Submit form if all validations pass
     try {
-      const createdProduct = await createProduct(product);
-      console.log(createdProduct);
-      history.back();
-    } catch (error) {
+      await createProduct(product);
+      setAlertInfo({ message: "Producto creado con éxito", type: "success" });
+      setShouldRedirect(true);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
       console.error(error);
+      setAlertInfo({
+        message: `No se pudo crear el producto: ${error.message}`,
+        type: "error",
+      });
     }
   };
 
@@ -101,8 +139,19 @@ const CreateProduct: React.FC = () => {
     return fieldsNotEmpty || errorsPresent;
   };
 
+  const handleCloseAlert = () => {
+    setAlertInfo({ message: "", type: null });
+  };
+
   return (
     <div className={styles.formContainer}>
+      {alertInfo.type && (
+        <Alert
+          message={alertInfo.message}
+          type={alertInfo.type}
+          onClose={handleCloseAlert}
+        />
+      )}
       <h2>Agregar Nuevo Producto</h2>
       <hr />
       <form onSubmit={handleSubmit}>
@@ -155,7 +204,7 @@ const CreateProduct: React.FC = () => {
         <div>
           <label>Fecha de liberación:</label>
           <input
-            type="text"
+            type="date"
             name="date_release"
             value={product.date_release}
             onChange={handleChange}
@@ -168,7 +217,7 @@ const CreateProduct: React.FC = () => {
         <div>
           <label>Fecha de revisión:</label>
           <input
-            type="text"
+            type="date"
             name="date_revision"
             value={product.date_revision}
             onChange={handleChange}
