@@ -5,6 +5,8 @@ import styles from "./Products.module.scss";
 import { formatDate } from "../../helpers/dateHelpers";
 import Search from "./Search/Search";
 import Pagination from "../Pagination/Pagination";
+import ProductForm from "./Create/CreateProduct";
+import { useNavigate } from "react-router-dom";
 
 const Products: React.FC = () => {
   const [allProducts, setAllProducts] = useState<Product[]>([]);
@@ -13,6 +15,8 @@ const Products: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(2);
+  const [showForm, setShowForm] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -32,7 +36,7 @@ const Products: React.FC = () => {
 
   useEffect(() => {
     paginateProducts();
-  }, [currentPage, itemsPerPage, allProducts, setFilteredProducts]);  
+  }, [currentPage, itemsPerPage, allProducts, setFilteredProducts]);
 
   const filterProducts = (query: string) => {
     if (!query) return allProducts;
@@ -68,13 +72,29 @@ const Products: React.FC = () => {
     setCurrentPage(1);
   };
 
+  const handleDeleteProduct = (productId: string) => {
+    const filtered = allProducts.filter((product) => product.id !== productId);
+    setAllProducts(filtered);
+    setShowForm(true);
+  };
+
+  const handleCreateProduct = () => {
+    navigate(`/create`);
+  };
+
   if (loading) return <p>Cargando productos...</p>;
   if (error) return <p>{error}</p>;
 
   return (
     <div>
       <h1>Lista de Productos</h1>
-      <Search onSearch={handleSearch} />
+      <div className={styles.header}>
+        <Search onSearch={handleSearch} />
+        <button className={styles.addButton} onClick={handleCreateProduct}>
+          Agregar Producto
+        </button>
+      </div>
+      {showForm && <ProductForm />}
       <table className={styles.productsTable}>
         <thead>
           <tr>
@@ -83,6 +103,7 @@ const Products: React.FC = () => {
             <th>Descripción</th>
             <th>Fecha de liberación</th>
             <th>Fecha de restricción</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -99,6 +120,11 @@ const Products: React.FC = () => {
               <td>{product.description}</td>
               <td>{formatDate(product.date_release)}</td>
               <td>{formatDate(product.date_revision)}</td>
+              <td>
+                <button onClick={() => handleDeleteProduct(product.id)}>
+                  Eliminar
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

@@ -16,7 +16,7 @@ const Search: React.FC<SearchProps> = ({ onSearch }) => {
   return (
     <input
       type="text"
-      className={styles.searchInput} // Aplica la clase aquí
+      className={styles.searchInput}
       value={query}
       onChange={handleChange}
       placeholder="Buscar productos financieros"

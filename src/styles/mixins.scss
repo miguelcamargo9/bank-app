@@ -45,11 +45,9 @@
 
 @mixin responsive-input {
   width: 100%;
-  max-width: 400px; // Establece un ancho máximo para vistas de escritorio
-  margin: 0 auto; // Centrar el input si no ocupa el ancho completo
-  box-sizing: border-box; // Incluye padding y border en el ancho del input
+  max-width: 400px;
 
   @media (max-width: $breakpoint-md) {
-    max-width: none; // En dispositivos móviles, el input puede expandirse
+    max-width: none;
   }
 }
