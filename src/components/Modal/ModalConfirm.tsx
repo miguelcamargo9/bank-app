@@ -24,8 +24,8 @@ const ModalConfirm: React.FC<ModalConfirmProps> = ({
   };
 
   return (
-    <div className={styles.modalBackdrop} onClick={onClose}>
-      <div className={styles.modalContent} onClick={stopPropagation}>
+    <div className={styles.modalBackdrop} onClick={onClose} data-testid="modal-backdrop">
+      <div className={styles.modalContent} onClick={stopPropagation} data-testid="modal-content">
         {children}
         <div className={styles.buttonContainer}>
           <button

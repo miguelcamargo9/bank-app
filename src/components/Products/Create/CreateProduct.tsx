@@ -100,7 +100,7 @@ const CreateProduct: React.FC = () => {
       await createProduct(product);
       setAlertInfo({ message: "Producto creado con éxito", type: "success" });
       setShouldRedirect(true);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error(error);
       setAlertInfo({
@@ -156,8 +156,9 @@ const CreateProduct: React.FC = () => {
       <hr />
       <form onSubmit={handleSubmit}>
         <div>
-          <label>ID del producto:</label>
+          <label htmlFor="id">ID del producto:</label>
           <input
+            id="id"
             type="text"
             name="id"
             value={product.id}
@@ -167,8 +168,9 @@ const CreateProduct: React.FC = () => {
           {errors.id && <div className={styles.errorMsg}>{errors.id}</div>}
         </div>
         <div>
-          <label>Nombre del producto:</label>
+          <label htmlFor="name">Nombre del producto:</label>
           <input
+            id="name"
             type="text"
             name="name"
             value={product.name}
@@ -178,8 +180,9 @@ const CreateProduct: React.FC = () => {
           {errors.name && <div className={styles.errorMsg}>{errors.name}</div>}
         </div>
         <div>
-          <label>Descripción:</label>
+          <label htmlFor="description">Descripción:</label>
           <input
+            id="description"
             type="text"
             name="description"
             value={product.description}
@@ -191,8 +194,9 @@ const CreateProduct: React.FC = () => {
           )}
         </div>
         <div>
-          <label>Logo (URL):</label>
+          <label htmlFor="logo">Logo (URL):</label>
           <input
+            id="logo"
             type="text"
             name="logo"
             value={product.logo}
@@ -202,8 +206,9 @@ const CreateProduct: React.FC = () => {
           {errors.logo && <div className={styles.errorMsg}>{errors.logo}</div>}
         </div>
         <div>
-          <label>Fecha de liberación:</label>
+          <label htmlFor="date_release">Fecha de liberación:</label>
           <input
+            id="date_release"
             type="date"
             name="date_release"
             value={product.date_release}
@@ -215,8 +220,9 @@ const CreateProduct: React.FC = () => {
           )}
         </div>
         <div>
-          <label>Fecha de revisión:</label>
+          <label htmlFor="date_revision">Fecha de revisión:</label>
           <input
+            id="date_revision"
             type="date"
             name="date_revision"
             value={product.date_revision}
@@ -239,7 +245,7 @@ const CreateProduct: React.FC = () => {
         )}
         {!isFormDirtyOrInvalid() && (
           <button
-            onClick={() => history.back()}
+            onClick={() => navigate(-1)}
             className={`${layoutStyles.button} ${layoutStyles.secondary}`}
           >
             Regresar

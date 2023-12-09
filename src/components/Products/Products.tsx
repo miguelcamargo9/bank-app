@@ -27,7 +27,7 @@ const Products: React.FC = () => {
   }>({ message: "", type: null });
 
   const navigate = useNavigate();
-  
+
   const loadProducts = async () => {
     try {
       const data = await fetchProducts();

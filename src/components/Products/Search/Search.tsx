@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import styles from './Search.module.scss';
+import React, { useState } from "react";
+import styles from "./Search.module.scss";
 
 interface SearchProps {
   onSearch: (query: string) => void;
 }
 
 const Search: React.FC<SearchProps> = ({ onSearch }) => {
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(event.target.value);
